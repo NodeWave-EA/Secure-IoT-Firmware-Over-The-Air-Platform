@@ -1,57 +1,119 @@
 #!/bin/bash
 # ==============================================================================
 # Script: sync-external-deps.sh
-# Description: Performs an ultra-lightweight, shallow sparse-checkout to track
-#              and sync a single subfolder from an external Git repository.
+# Description: This script automates the synchronization of external dependencies for the project. It supports both full repository checkouts and specific subfolder tracking using Git sparse-checkout. The script ensures that each dependency is either initialized or updated to the latest state from its respective remote repository.
 # Usage: ./sync-external-deps.sh
 # ==============================================================================
 
-# Exit immediately if any command fails, treating unset variables as an error
 set -euo pipefail
 
-# --- Configuration Constants ---
-TARGET_DIR="test"
-SUBFOLDER_PATH="docker"
-REPO_URL="https://github.com/supabase/supabase"
-BRANCH="master" # Note: Supabase uses 'master' as the default branch
+# ------------------------------------------------------------------------------
+# --- Dependency Registry Configuration ---
+# ------------------------------------------------------------------------------
+# Arguments: target_directory | subfolder_path (use "" for full repo) | repository_url | tracking_branch
 
-# --- Operational Logic ---
+register_dependencies() {
+    # 1. Subfolder checkout with custom local target directory name
+    add_dep "deps/supabase-docker"     "docker"          "https://github.com/supabase/supabase"              "master"
+    
+    # 2. Full repository checkout with custom local target directory name
+    add_dep "deps/FOTA-Client-ESP32"   ""                "https://github.com/NodeWave-EA/FOTA-Client-ESP32.git" "refactor/codebase"
+    
+    # Add more entries here as needed, following the same pattern:
+    # add_dep "local_target_dir" "subfolder_path_or_empty" "repository_url" "branch_name"
+}
 
-# Self-healing mechanism: Remove the directory if a prior run left it empty or corrupted
-if [ -d "$TARGET_DIR" ] && [ -z "$(ls -A "$TARGET_DIR")" ]; then
-    printf "[INFO] Detecting uninitialized or corrupted directory. Performing reset...\n"
-    rm -rf "$TARGET_DIR"
-fi
+# ------------------------------------------------------------------------------
+# --- Core Synchronization Logic ---
+# ------------------------------------------------------------------------------
 
-# Case A: Initial Provisioning Setup
-if [ ! -d "$TARGET_DIR" ]; then
-    printf "[INFO] Initializing shallow sparse-checkout workspace for directory: %s\n" "$TARGET_DIR"
-    mkdir -p "$TARGET_DIR"
-    cd "$TARGET_DIR"
-    
-    # Initialize repository quietly without default branch configuration noise
-    git init -q
-    git remote add origin "$REPO_URL"
-    
-    # Enforce sparse-checkout layer rules prior to any remote connections
-    git config core.sparseCheckout true
-    git sparse-checkout set "$SUBFOLDER_PATH"
-    
-    # Execute network fetch limiting history to 1 commit (--depth=1) 
-    # and stripping full commit object blobs (--filter=blob:none)
-    printf "[INFO] Fetching HEAD commit layout for object path: %s\n" "$SUBFOLDER_PATH"
-    git fetch --depth=1 --filter=blob:none origin "$BRANCH"
-    
-    # Populate the local working tree with fetched remote tracking branch state
-    git checkout "$BRANCH"
-    printf "[SUCCESS] Dependency tracking configured and sync completed.\n"
+# Global staging arrays to hold parsed structural properties cleanly
+TARGET_DIRS=()
+SUBFOLDERS=()
+URLS=()
+BRANCHES=()
 
-# Case B: Incremental Update Sequence
-else
-    printf "[INFO] Workspace directory exists. Initiating delta update sync...\n"
-    cd "$TARGET_DIR"
+# Pipeline configuration populator
+add_dep() {
+    TARGET_DIRS+=("$1")
+    SUBFOLDERS+=("${2:-}") # Defaults to empty string if missing
+    URLS+=("$3")
+    BRANCHES+=("$4")
+}
+
+sync_dependency() {
+    local target_dir="$1"
+    local subfolder_path="$2"
+    local repo_url="$3"
+    local branch="$4"
     
-    # Fetch and merge only the newest remote update without pulling historical baggage
-    git pull --depth=1 origin "$BRANCH"
-    printf "[SUCCESS] Local working files synchronized to current HEAD state.\n"
-fi
+    local execution_root
+    execution_root="$(pwd)"
+
+    printf "[INFO] Processing tracking target: %s -> %s\n" "$repo_url" "$target_dir"
+
+    # Self-healing layer: Eliminate empty or corrupted target directories
+    if [ -d "$target_dir" ] && [ -z "$(ls -A "$target_dir")" ]; then
+        printf "[WARN] [%s] Detecting uninitialized or corrupted directory. Resetting...\n" "$target_dir"
+        rm -rf "$target_dir"
+    fi
+
+    # Case A: Initial Provisioning Setup
+    if [ ! -d "$target_dir" ]; then
+        printf "[INFO] [%s] Workspace directory not found. Initializing setup...\n" "$target_dir"
+        
+        # Scenario 1: Full Repository Clone
+        if [ -z "$subfolder_path" ]; then
+            printf "[INFO] [%s] Cloning full repository state (Branch: %s)...\n" "$target_dir" "$branch"
+            git clone -q --depth=1 --branch="$branch" "$repo_url" "$target_dir"
+            printf "[SUCCESS] [%s] Full dependency profile generated successfully.\n\n" "$target_dir"
+        
+        # Scenario 2: Specific Subfolder Tracking (Sparse-Checkout Engine)
+        else
+            printf "[INFO] [%s] Enforcing sparse-checkout constraints for object tree path: %s...\n" "$target_dir" "$subfolder_path"
+            mkdir -p "$target_dir"
+            cd "$target_dir"
+            
+            git init -q
+            git remote add origin "$repo_url"
+            
+            git config core.sparseCheckout true
+            git sparse-checkout set "$subfolder_path"
+            
+            git fetch --depth=1 --filter=blob:none origin "$branch"
+            git checkout -q "$branch"
+            printf "[SUCCESS] [%s] Subfolder tracking initialized successfully.\n\n" "$target_dir"
+        fi
+    
+    # Case B: Incremental Update Sequence
+    else
+        printf "[INFO] [%s] Local checkout history confirmed. Pulling update deltas...\n" "$target_dir"
+        cd "$target_dir"
+        
+        git pull -q --depth=1 origin "$branch"
+        printf "[SUCCESS] [%s] Local working trees updated cleanly to current remote state.\n\n" "$target_dir"
+    fi
+
+    cd "$execution_root"
+}
+
+# --- Script Entrypoint ---
+main() {
+    printf "======================================================================\n"
+    printf "Starting external workspace dependency verification sequence\n"
+    printf "======================================================================\n\n"
+
+    # Load configuration mappings into isolated stack states
+    register_dependencies
+
+    # Iterate through mapped dependencies structurally without string parsers
+    for i in "${!TARGET_DIRS[@]}"; do
+        sync_dependency "${TARGET_DIRS[i]}" "${SUBFOLDERS[i]}" "${URLS[i]}" "${BRANCHES[i]}"
+    done
+
+    printf "======================================================================\n"
+    printf "Synchronization tasks executed completely.\n"
+    printf "======================================================================\n"
+}
+
+main "$@"
