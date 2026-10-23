@@ -1,7 +1,9 @@
-[submodule "supabase_docker"]
+[submodule "docker/.supabase-root"]
 	path = docker/.supabase-root
 	url = https://github.com/supabase/supabase.git
-	ignore = all
+	shallow = true
+	sparse = true
+
 [submodule "apps/library/ESP32"]
 	path = apps/library/ESP32
 	url = https://github.com/NodeWave-EA/FOTA-Client-ESP32.git
