@@ -1,7 +1,7 @@
 import path from 'node:path'
 
 export default {
-  // Catch every file extension supported by your Antfu configuration
+  // Catch every file extension supported by Antfu configuration
   '**/*.{ts,vue,css,js,json,yaml,yml,toml,md,html}': (stagedFiles) => {
     const commands = []
     const packagesToSweep = new Set()
@@ -24,13 +24,13 @@ export default {
       }
     })
 
-    // 1. If any root files are staged, lint ONLY those specific files explicitly
+    // If any root files are staged, lint ONLY those specific files explicitly
     if (rootFilesToLint.length > 0) {
       const filesString = rootFilesToLint.join(' ')
       commands.push(`bunx --bun eslint --config packages/configs/eslint.config.ts --fix ${filesString}`)
     }
 
-    // 2. Execute isolated workspace routines on the targeted folder contexts
+    // Execute isolated workspace routines on the targeted folder contexts
     packagesToSweep.forEach((target) => {
       commands.push(`bun --cwd ${target} lint:fix`)
     })
