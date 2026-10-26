@@ -1,22 +1,59 @@
 {
-  "[typescript]": {
-    "editor.defaultFormatter": "TypeScriptTeam.native-preview"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always",
-    "source.organizeImports": "always"
-  },
-  // Disable Prettier
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  // Format and fix errors on save
+  // Disable the default VS Code formatter for these files
   "editor.formatOnSave": true,
-  // Ensure ESLint flat config system is active
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  // Explicitly assign ESLint as the code formatter per language layer
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  // Enable Flat Config support and auto-fix rules on save
   "eslint.useFlatConfig": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  // Ensure ESLint validates all configured document extension profiles
   "eslint.validate": [
     "javascript",
-    "typescript"
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "css",
+    "json",
+    "jsonc"
   ],
-  // --- ADD THESE FOR ALIAS SUPPORT ---
-  "js/ts.preferences.importModuleSpecifier": "non-relative",
-  "prettier.enable": false
+  // Prevent VS Code's built-in TS server from clashing with Volar
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  // Ensure path auto-complete resolves Nuxt aliases (~/, @/) accurately
+  "js/ts.suggest.paths": true,
+  // Force quick suggestions inside Vue template tag attributes
+  "editor.quickSuggestions": {
+    "strings": "on",
+    "comments": "off",
+    "other": "on"
+  },
+  "js/ts.experimental.useTsgo": false
 }
