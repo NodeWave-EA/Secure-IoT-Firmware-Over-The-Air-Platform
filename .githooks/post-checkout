@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Script: .githooks/post-merge
+# Description: This Git hook script is executed after a successful merge operation. 
+#              It ensures that the submodule located at 'docker/.supabase-root' is 
+#              properly initialized, configured for sparse-checkout, and that its 
+#              hooks path is correctly set to leverage shared workspace automation scripts.
+# ==============================================================================
+
+set -euo pipefail
+
+# --- Configuration Constants ---
+SUBMODULE_PATH="docker/.supabase-root"
+WORKSPACE_HOOKS_RELATIVE_PATH="../../.githooks"
+
+# --- Main Execution Routine ---
+main() {
+    # Verify the target submodule directory is checked out and structurally active
+    if [ -d "$SUBMODULE_PATH" ]; then
+        printf "[INFO] Synchronizing workspace configuration constraints on: %s\n" "$SUBMODULE_PATH"
+        
+        # Update parent module tracking settings for safety
+        git submodule sync --quiet "$SUBMODULE_PATH"
+        
+        # Configure the submodule local config to enable sparse checkout flags
+        git -C "$SUBMODULE_PATH" config core.sparseCheckout true
+        
+        # Restructure tracking boundaries to map ONLY the docker subfolder paths
+        printf "[INFO] Enforcing sparse-checkout constraints on Supabase...\n"
+        git -C "$SUBMODULE_PATH" sparse-checkout init --cone
+        git -C "$SUBMODULE_PATH" sparse-checkout set docker
+        
+        # Map the inner submodule's execution context to leverage shared workspace automation paths
+        printf "[INFO] Routing nested submodule hook hooksPath to parent project registry...\n"
+        git -C "$SUBMODULE_PATH" config core.hooksPath "$WORKSPACE_HOOKS_RELATIVE_PATH"
+        
+        # Bring the active working tree inside the sparse constraint up to date safely
+        printf "[INFO] Re-validating local sparse file allocations...\n"
+        git submodule update --init --recursive --depth=1 --progress "$SUBMODULE_PATH"
+        
+        printf "[SUCCESS] Submodule optimization and configuration verified.\n"
+    fi
+}
+
+main "$@"
