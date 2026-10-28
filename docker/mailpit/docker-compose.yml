@@ -12,4 +12,6 @@ services:
 networks:
   fota_network:
     name: fota_network
+    driver: bridge
     external: true
+

@@ -1,0 +1,23 @@
+services:
+  pgadmin:
+    image: dpage/pgadmin4:9.18.0
+    container_name: shadowdb_admin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@shadow.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - fota_network
+
+volumes:
+  pgadmin_data:
+
+networks:
+  fota_network:
+    name: fota_network
+    driver: bridge
+    external: true

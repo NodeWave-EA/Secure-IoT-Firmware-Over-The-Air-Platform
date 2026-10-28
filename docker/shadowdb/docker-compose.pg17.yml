@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: shadowdb
+    restart: always
+    environment:
+      POSTGRES_USER: shadow_user
+      POSTGRES_PASSWORD: mysecurepassword
+      POSTGRES_DB: shadowdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - shadowdb_data:/var/lib/postgresql/data
+    networks:
+      - fota_network
+
+volumes:
+  shadowdb_data:
+
+networks:
+  fota_network:
+    name: fota_network
+    driver: bridge
+    external: true
