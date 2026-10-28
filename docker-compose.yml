@@ -1,6 +1,10 @@
 include:
-  - path: ./docker/mqtt/docker-compose.yml
-  - path: ./docker/rabbitmq/docker-compose.yml
+  # - path: ./docker/mqtt/docker-compose.yml
+  # - path: ./docker/rabbitmq/docker-compose.yml
+  # - path: ./docker/mailpit/docker-compose.yml
+  - path: ./docker/shadowdb/docker-compose.pg17.yml
+  - path: ./docker/shadowdb/docker-compose.pgAdmin.yml
   - path: ./docker/supabase/docker-compose.yml
   - path: ./docker/supabase/docker-compose.s3.yml
-  - path: ./apps/api-gateway/docker-compose.yml
+  - path: ./docker/supabase/docker-compose.pg17.yml
+  # - path: ./apps/api-gateway/docker-compose.yml
