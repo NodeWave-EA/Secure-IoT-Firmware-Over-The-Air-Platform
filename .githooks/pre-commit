@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Script: .githooks/pre-commit
+# Description: Pre-commit hook to validate code changes before allowing a commit.
+# ==============================================================================
+
+set -euo pipefail
+
+# ANSI color codes for clean terminal output
+COLOR_INFO="\033[0;34m"
+COLOR_SUCCESS="\033[0;32m"
+COLOR_ERROR="\033[0;31m"
+COLOR_RESET="\033[0m"
+
+log_info()    { printf "%b[PRE-COMMIT INFO]%b %s\n" "${COLOR_INFO}" "${COLOR_RESET}" "$1"; }
+log_success() { printf "%b[PRE-COMMIT SUCCESS]%b %s\n" "${COLOR_SUCCESS}" "${COLOR_RESET}" "$1"; }
+log_error()   { printf "%b[PRE-COMMIT ERROR]%b %s\n" "${COLOR_ERROR}" "${COLOR_RESET}" "$1" >&2; }
+
+# Track block failures
+FAILED=0
+
+# Gather all file paths currently staged for this commit
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=d)
+
+if [[ -z "$STAGED_FILES" ]]; then
+    exit 0
+fi
+
+log_info "Running local pre-commit verifications..."
+
+# ------------------------------------------------------------------------------
+# Security Secret & Private Key Leak Prevention
+# ------------------------------------------------------------------------------
+log_info "Scanning staged files for accidental credential or key exposure..."
+
+# High-risk patterns: Private Keys, generic secrets, AWS/Supabase tokens, un-replaced boilerplate
+SECRET_PATTERNS="(BEGIN_RSA_PRIVATE_KEY|BEGIN_PRIVATE_KEY|password\s*=\s*['\"][^'\"]+['\"]|supabase_secret|jwt_secret|anon_key|service_role_key)"
+
+for file in $STAGED_FILES; do
+    # Only scan text files, skipping binary assets
+    if git diff --cached "$file" | grep -qE '^[+-]' | grep -qIv 'Binary files differ'; then
+        # Look specifically at lines being added (+)
+        if git diff --cached "$file" | grep -E '^\+' | grep -qE "$SECRET_PATTERNS"; then
+            log_error "File '$file' contains a suspected private key, password, or API token!"
+            FAILED=1
+        fi
+    fi
+done
+
+# ------------------------------------------------------------------------------
+# Docker Compose Configuration Validation
+# ------------------------------------------------------------------------------
+if command -v docker &> /dev/null || command -v docker-compose &> /dev/null; then
+    # Determine the active docker compose execution syntax available
+    COMPOSE_CMD="docker compose"
+    if ! docker compose version &> /dev/null && command -v docker-compose &> /dev/null; then
+        COMPOSE_CMD="docker-compose"
+    fi
+
+    for file in $STAGED_FILES; do
+        if [[ "$file" == *"docker-compose"* && ("$file" == "*.yml" || "$file" == "*.yaml") ]]; then
+            log_info "Validating configuration syntax for: $file"
+            if ! $COMPOSE_CMD -f "$file" config &> /dev/null; then
+                log_error "Invalid Docker Compose syntax detected in file: $file"
+                FAILED=1
+            fi
+        fi
+    done
+fi
+
+# ------------------------------------------------------------------------------
+# Shell Script Check
+# ------------------------------------------------------------------------------
+for file in $STAGED_FILES; do
+    if [[ "$file" == "*.sh" ]]; then
+        # Perform a basic bash syntax evaluation execution check (-n)
+        if ! bash -n "$file" 2>/dev/null; then
+            log_error "Bash syntax validation error detected in script: $file"
+            FAILED=1
+        fi
+        
+        # Verify that scripts being committed have fail-fast mechanisms configured
+        if ! grep -qE "set -.*e" "$file" && ! grep -q "set -o pipefail" "$file"; then
+            log_info "Warning: Shell script '$file' is missing safety flags (e.g., set -e)."
+        fi
+    fi
+done
+
+# ------------------------------------------------------------------------------
+# Final Execution Verdict
+# ------------------------------------------------------------------------------
+if [ $FAILED -ne 0 ]; then
+    log_error "Commit blocked. Please resolve the errors highlighted above and try again."
+    exit 1
+fi
+
+log_success "All pre-commit checks passed successfully."
+exit 0
