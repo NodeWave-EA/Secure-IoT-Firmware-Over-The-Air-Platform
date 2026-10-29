@@ -100,6 +100,9 @@ export default defineNuxtConfig({
 
   nitro: {
     compressPublicAssets: true,
+    output: {
+      dir: '../../.vercel/output',
+    },
   },
 
   eslint: {
