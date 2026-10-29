@@ -1,22 +1,9 @@
-<script lang="ts" setup>
-</script>
-
 <template>
-  <UApp>
-    <UHeader>
-      <template #title>
-        <div>FOTA</div>
-      </template>
-    </UHeader>
-    <UMain class="min-h-screen">
-      <UContainer>
-        <slot />
-      </UContainer>
+  <div class="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-[#070A12] dark:text-slate-100">
+    <AppHeader />
+    <UMain id="main-content" class="flex-1 focus:outline-none">
+      <slot />
     </UMain>
-    <UFooter>
-      <template #bottom>
-        <div>FOTA</div>
-      </template>
-    </UFooter>
-  </UApp>
+    <AppFooter />
+  </div>
 </template>

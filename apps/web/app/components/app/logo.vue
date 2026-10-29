@@ -1,0 +1,286 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+
+interface Props {
+  size?: string | number
+  width?: string | number
+  height?: string | number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: undefined,
+  width: '100%',
+  height: '100%',
+})
+
+const calculatedWidth = computed(() => {
+  if (props.size) {
+    return typeof props.size === 'number'
+      ? `${props.size}px`
+      : props.size
+  }
+  return typeof props.width === 'number'
+    ? `${props.width}px`
+    : props.width
+})
+
+const calculatedHeight = computed(() => {
+  if (props.size) {
+    return typeof props.size === 'number'
+      ? `${props.size}px`
+      : props.size
+  }
+  return typeof props.height === 'number'
+    ? `${props.height}px`
+    : props.height
+})
+</script>
+
+<template>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 600 600"
+    :width="calculatedWidth"
+    :height="calculatedHeight"
+    style="background: transparent;"
+    role="img"
+    aria-label="NODEFOTA Secure IoT Platform Logo"
+  >
+    <defs>
+      <linearGradient id="iotShieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#00F2FE">
+          <animate attributeName="stop-color" values="#00F2FE; #00F5A0; #7B2CBF; #FF9E00; #00F2FE" dur="16s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="100%" stop-color="#4FACFE">
+          <animate attributeName="stop-color" values="#4FACFE; #00D9F6; #C77DFF; #FF5400; #4FACFE" dur="16s" repeatCount="indefinite" />
+        </stop>
+      </linearGradient>
+
+      <linearGradient id="iotCoreGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#00F5A0">
+          <animate attributeName="stop-color" values="#00F5A0; #7B2CBF; #FF9E00; #00F2FE; #00F5A0" dur="16s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="100%" stop-color="#00D9F6">
+          <animate attributeName="stop-color" values="#00D9F6; #C77DFF; #FF5400; #4FACFE; #00D9F6" dur="16s" repeatCount="indefinite" />
+        </stop>
+      </linearGradient>
+
+      <radialGradient id="nodeGlowGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#00F2FE" stop-opacity="1">
+          <animate attributeName="stop-color" values="#00F2FE; #00F5A0; #7B2CBF; #FF9E00; #00F2FE" dur="16s" repeatCount="indefinite" />
+        </stop>
+        <stop offset="100%" stop-color="#00F2FE" stop-opacity="0">
+          <animate attributeName="stop-color" values="#00F2FE; #00F5A0; #7B2CBF; #FF9E00; #00F2FE" dur="16s" repeatCount="indefinite" />
+        </stop>
+      </radialGradient>
+
+      <filter id="adaptiveGlow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    <g class="fota-logo-group" filter="url(#adaptiveGlow)">
+      <g stroke="url(#iotShieldGrad)" fill="none" stroke-linecap="round">
+        <path class="signal-arc arc-1" d="M 250 110 A 55 55 0 0 1 350 110" stroke-width="5" />
+        <path class="signal-arc arc-2" d="M 225 85 A 85 85 0 0 1 375 85" stroke-width="5" />
+        <path class="signal-arc arc-3" d="M 200 60 A 115 115 0 0 1 400 60" stroke-width="5" />
+      </g>
+
+      <path d="M 160 170 C 230 150 300 135 300 135 C 300 135 370 150 440 170 C 440 330 380 445 300 505 C 220 445 160 330 160 170 Z" fill="url(#iotShieldGrad)" fill-opacity="var(--shield-bg-opacity, 0.08)" />
+      <path class="shield-frame" d="M 160 170 C 230 150 300 135 300 135 C 300 135 370 150 440 170 C 440 330 380 445 300 505 C 220 445 160 330 160 170 Z" fill="none" stroke="url(#iotShieldGrad)" stroke-width="7" stroke-linejoin="round" stroke-linecap="round" />
+      <path d="M 185 192 C 240 176 300 162 300 162 C 300 162 360 176 415 192 C 415 320 365 418 300 472 C 235 418 185 320 185 192 Z" fill="none" stroke="url(#iotShieldGrad)" stroke-width="2" stroke-opacity="var(--stroke-base-opacity, 0.35)" stroke-dasharray="8 6" />
+
+      <g stroke="url(#iotCoreGrad)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path class="circuit-line" stroke-width="3.5" d="M 300 162 L 300 230" />
+        <path class="circuit-line-rev" stroke-width="3" d="M 300 390 L 300 472" />
+        <path class="circuit-line" stroke-width="3" d="M 230 270 L 300 230 L 370 270" />
+        <path class="circuit-line-rev" stroke-width="3" d="M 370 350 L 300 390 L 230 350" />
+        <path class="circuit-line" stroke-width="3" d="M 230 270 L 230 350" />
+        <path class="circuit-line-rev" stroke-width="3" d="M 370 270 L 370 350" />
+        <path stroke="url(#iotCoreGrad)" stroke-width="2" stroke-opacity="0.5" d="M 230 270 L 370 350" />
+        <path stroke="url(#iotCoreGrad)" stroke-width="2" stroke-opacity="0.5" d="M 370 270 L 230 350" />
+      </g>
+
+      <g class="data-packet">
+        <circle cx="300" cy="230" r="4" fill="#FFFFFF" />
+        <circle cx="370" cy="350" r="4" fill="#FFFFFF" />
+      </g>
+
+      <polygon class="central-core-ring" points="300,210 380,256 380,348 300,394 220,348 220,256" fill="none" stroke="url(#iotCoreGrad)" stroke-width="2" stroke-dasharray="6 10" />
+
+      <g class="central-core-inner">
+        <circle cx="300" cy="310" r="32" fill="url(#nodeGlowGrad)" />
+        <polygon points="300,285 322,298 322,322 300,335 278,322 278,298" fill="none" stroke="url(#iotShieldGrad)" stroke-width="3.5" stroke-linejoin="round" />
+        <path d="M 294 308 L 294 304 A 6 6 0 0 1 306 304 L 306 308 M 292 308 L 308 308 L 308 320 L 292 320 Z" fill="none" stroke="var(--mode-accent-contrast, #ffffff)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      </g>
+
+      <g fill="url(#iotShieldGrad)">
+        <circle class="node-point node-delay-1" cx="300" cy="230" r="7" />
+        <circle cx="300" cy="230" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+        <circle class="node-point node-delay-2" cx="370" cy="270" r="7" />
+        <circle cx="370" cy="270" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+        <circle class="node-point node-delay-3" cx="370" cy="350" r="7" />
+        <circle cx="370" cy="350" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+        <circle class="node-point node-delay-1" cx="300" cy="390" r="7" />
+        <circle cx="300" cy="390" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+        <circle class="node-point node-delay-2" cx="230" cy="350" r="7" />
+        <circle cx="230" cy="350" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+        <circle class="node-point node-delay-3" cx="230" cy="270" r="7" />
+        <circle cx="230" cy="270" r="3" fill="var(--mode-accent-contrast, #ffffff)" />
+      </g>
+    </g>
+  </svg>
+</template>
+
+<style scoped>
+:root {
+  --shield-bg-opacity: 0.04;
+  --stroke-base-opacity: 0.25;
+  --glow-intensity: 0.3;
+  --mode-accent-contrast: #0f172a;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shield-bg-opacity: 0.12;
+    --stroke-base-opacity: 0.45;
+    --glow-intensity: 0.85;
+    --mode-accent-contrast: #ffffff;
+  }
+}
+.fota-logo-group {
+  transform-origin: center;
+  filter: drop-shadow(0 0 12px rgba(0, 242, 254, var(--glow-intensity, 0.5)));
+}
+.signal-arc {
+  transform-origin: 300px 115px;
+  animation: arcPulse 2.4s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  opacity: 0;
+}
+.arc-1 {
+  animation-delay: 0s;
+}
+.arc-2 {
+  animation-delay: 0.5s;
+}
+.arc-3 {
+  animation-delay: 1s;
+}
+@keyframes arcPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+    stroke-width: 4px;
+  }
+  50% {
+    opacity: 0.9;
+    stroke-width: 6px;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+    stroke-width: 2px;
+  }
+}
+.shield-frame {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  animation: shieldEnergyFlow 12s linear infinite;
+}
+@keyframes shieldEnergyFlow {
+  0% {
+    stroke-dashoffset: 2000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+.circuit-line {
+  stroke-dasharray: 10 15;
+  animation: circuitDataTransfer 1.8s linear infinite;
+}
+.circuit-line-rev {
+  stroke-dasharray: 12 12;
+  animation: circuitDataTransferRev 2.2s linear infinite;
+}
+@keyframes circuitDataTransfer {
+  from {
+    stroke-dashoffset: 50;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes circuitDataTransferRev {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 48;
+  }
+}
+.node-point {
+  animation: nodePulse 2s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.node-delay-1 {
+  animation-delay: 0.3s;
+}
+.node-delay-2 {
+  animation-delay: 0.7s;
+}
+.node-delay-3 {
+  animation-delay: 1.1s;
+}
+@keyframes nodePulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 1;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+}
+.central-core-ring {
+  transform-origin: 300px 310px;
+  animation: coreRotate 10s linear infinite;
+}
+.central-core-inner {
+  transform-origin: 300px 310px;
+  animation: coreBreath 3s ease-in-out infinite alternate;
+}
+@keyframes coreRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes coreBreath {
+  0% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+.data-packet {
+  transform-origin: 300px 310px;
+  animation: packetOrbit 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes packetOrbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

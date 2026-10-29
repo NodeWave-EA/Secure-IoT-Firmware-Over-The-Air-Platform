@@ -1,27 +1,20 @@
-<script lang="ts" setup>
-const { log } = useLogger()
-
-onMounted(() => {
-  log('App mounted successfully and ready.')
+<script setup lang="ts">
+useSeoMeta({
+  title: 'Secure IoT FOTA Platform',
+  ogTitle: 'NODEFOTA - Zero-Trust Wireless Firmware Updates',
+  description: 'Enterprise-grade wireless firmware updates, cryptographic differential patching, and dual-bank rollback safety for IoT fleets.',
+  ogDescription: 'Enterprise-grade wireless firmware updates, cryptographic differential patching, and dual-bank rollback safety for IoT fleets.',
+  ogImage: 'https://secure-iot-fota-platform-beta.vercel.app/og-image.png',
+  twitterCard: 'summary_large_image',
 })
-
-// Watcher logging on route changes
-const route = useRoute()
-watch(
-  () => route.path,
-  (newPath) => {
-    log(`Navigated to route: ${newPath}`, 'RouteWatcher')
-  },
-)
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtRouteAnnouncer />
-    <NuxtLoadingIndicator
-      :height="3"
-      color="repeating-linear-gradient(to right, #14b8a6 0%, #0d9488 50%, #2dd4bf 100%)"
-    />
-    <NuxtPage />
-  </NuxtLayout>
+  <UApp>
+    <NuxtLayout>
+      <NuxtRouteAnnouncer />
+      <NuxtLoadingIndicator />
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>
