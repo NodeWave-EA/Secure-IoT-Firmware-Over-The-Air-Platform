@@ -15,8 +15,12 @@ export default defineNuxtPlugin((nuxtApp) => {
         || internalComponent?.name
         || 'UnknownComponent'
 
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    const stack = error instanceof Error ? error.stack : undefined
+    const errorMessage = error instanceof Error
+      ? error.message
+      : String(error)
+    const stack = error instanceof Error
+      ? error.stack
+      : undefined
 
     // Grab request URL in both client (window) and server (SSR event context)
     const currentUrl = import.meta.client
@@ -35,8 +39,12 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Capture global Nuxt application-level errors (SSR / Lifecycle hooks)
   nuxtApp.hook('app:error', (error) => {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    const stack = error instanceof Error ? error.stack : undefined
+    const errorMessage = error instanceof Error
+      ? error.message
+      : String(error)
+    const stack = error instanceof Error
+      ? error.stack
+      : undefined
 
     const currentUrl = import.meta.client
       ? window.location.href
