@@ -44,7 +44,14 @@ async function bootstrap(): Promise<number> {
   app.enableCors({
     origin: '*',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    methods: [
+      'GET',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE',
+      'OPTIONS',
+    ],
     allowedHeaders: [
       'Content-Type',
       'Authorization',
@@ -64,7 +71,9 @@ async function bootstrap(): Promise<number> {
   )
 
   app.enableShutdownHooks()
-  app.setGlobalPrefix(globalPrefix, { exclude: ['/', '/health'] })
+  app.setGlobalPrefix(globalPrefix, {
+    exclude: ['/', '/health'],
+  })
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle(apiName)
@@ -116,7 +125,9 @@ bootstrap()
   })
   .catch((error: unknown) => {
     const errorMessage
-      = error instanceof Error ? error.message : String(error)
+      = error instanceof Error
+        ? error.message
+        : String(error)
     logger.error('Server failed to start up cleanly', errorMessage)
     process.exit(1)
   })

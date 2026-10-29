@@ -2,7 +2,7 @@
   "name": "@fota/web",
   "type": "module",
   "private": true,
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.4",
   "license": "MIT",
   "scripts": {
     "build": "nuxt build",
@@ -17,17 +17,25 @@
     "@fota/configs": "workspace:*",
     "@fota/logger": "workspace:*",
     "@fota/types": "workspace:*",
-    "@iconify-json/lucide": "^1.2.118",
-    "@iconify-json/simple-icons": "^1.2.91",
-    "@nuxt/ui": "^4.10.0",
-    "nuxt": "^4.5.0",
-    "tailwindcss": "^4.3.3"
+    "@iconify-json/line-md": "^1.2.16",
+    "@iconify-json/tabler": "^1.2.43",
+    "@nuxt/fonts": "1.2.0",
+    "@nuxt/image": "2.2.0",
+    "@nuxt/scripts": "^1.3.12",
+    "@nuxt/ui": "^4.12.0",
+    "@nuxtjs/seo": "6.0.1",
+    "@nuxtjs/turnstile": "1.1.3",
+    "@vueuse/nuxt": "15.0.0",
+    "nuxt": "^4.6.3",
+    "tailwindcss": "^4.3.3",
+    "vue": "^3.5.0"
   },
   "devDependencies": {
-    "@nuxt/eslint": "^1.16.0",
+    "@nuxt/eslint": "^1.17.0",
     "@nuxt/types": "^2.18.1",
-    "eslint": "^10.7.0",
+    "@tailwindcss/typography": "^0.5.20",
+    "eslint": "^10.13.0",
     "typescript": "^6.0.3",
-    "vue-tsc": "^3.3.7"
+    "vue-tsc": "^3.3.13"
   }
 }
