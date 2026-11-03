@@ -3,7 +3,9 @@
 	url = https://github.com/supabase/supabase.git
 	shallow = true
 	sparse = true
+	ignore = dirty
 
 [submodule "apps/library/ESP32"]
 	path = apps/library/ESP32
 	url = https://github.com/NodeWave-EA/FOTA-Client-ESP32.git
+	ignore = dirty
