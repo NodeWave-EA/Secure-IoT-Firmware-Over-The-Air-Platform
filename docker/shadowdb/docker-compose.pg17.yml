@@ -1,14 +1,14 @@
 services:
-  postgres:
+  shadowdb:
     image: postgres:17-alpine
     container_name: shadowdb
     restart: always
     environment:
       POSTGRES_USER: shadow_user
       POSTGRES_PASSWORD: mysecurepassword
-      POSTGRES_DB: fota                # The primary database initialized automatically
+      POSTGRES_DB: fota # The primary database initialized automatically
     ports:
-      - "5433:5432"                    # Expose PostgreSQL on port 5433 to avoid conflicts with local installations
+      - '5433:5432' # Expose PostgreSQL on port 5433 to avoid conflicts with local installations
     volumes:
       - shadowdb_data:/var/lib/postgresql/data
       # Inline script to automatically create the shadow database on first run

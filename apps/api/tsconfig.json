@@ -1,37 +1,26 @@
 {
-  "extends": "@fota/configs/tsconfig.json",
   "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "declaration": true,
     "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2023",
+    "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
     "incremental": true,
-    "noImplicitAny": true,
-    "strictBindCallApply": true,
-    "sourceMap": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "types": ["vitest/globals", "node", "bun"],
     "paths": {
-      "@fota-api/common": [
-        "./libs/common/src/index.ts"
-      ],
-      "@fota-api/database": [
-        "./libs/database/src/index.ts"
-      ],
-      "@fota-api/types": [
-        "./libs/types/src/index.ts"
-      ],
-      "@fota-api/gateway/*": [
-        "./apps/gateway/src/*"
-      ],
-      "@fota-api/auth/*": [
-        "./apps/auth/src/*"
-      ]
+      "#*": ["./src/*"],
     }
-  },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "apps/**/test",
-    "apps/**/*.spec.ts"
-  ]
+  }
 }

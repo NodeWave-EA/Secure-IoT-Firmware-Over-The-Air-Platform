@@ -1,0 +1,24 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "FOTA - Main Database",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "fota",
+      "Username": "shadow_user",
+      "Mode": "prefer",
+      "SSLMode": "prefer"
+    },
+    "2": {
+      "Name": "FOTA - Shadow Database",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "fota_shadow",
+      "Username": "shadow_user",
+      "Mode": "prefer",
+      "SSLMode": "prefer"
+    }
+  }
+}
